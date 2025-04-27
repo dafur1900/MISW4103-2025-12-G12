@@ -99,6 +99,8 @@ console.log(inputValues);
       browser.close();
 
       fs.copyFileSync('./template.html', `${basePath}/index.html`);
+      fs.copyFileSync('./main.css', `${basePath}/main.css`);
+      fs.copyFileSync('./index.js', `${basePath}/index.js`);
     }
 
     console.log('------------------------------------------------------------------------------------')
