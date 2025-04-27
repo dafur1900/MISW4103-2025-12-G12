@@ -1,5 +1,5 @@
 {
-    "url": "https://thesoftwaredesignlab.github.io",
+    "url": "http://localhost:2368/ghost",
     "headless": true,
     "depthLevels": 1,
     "inputValues": false,
