@@ -67,6 +67,7 @@ console.log(inputValues);
 
       //Make sure errors and console events are catched
       await addListeners(page);
+      await login(page, "danielsierra34@gmail.com", "q1w2e3r4t5y6");
       
       if (!fs.existsSync(screenshots_directory)){
         fs.mkdirSync(screenshots_directory, { recursive: true });
@@ -657,5 +658,23 @@ async function fillInput(elementHandle, page){
   else if(type === 'submit' || type === 'radio' || type === 'checkbox'){
     elementHandle.click();
   }
+}
+
+async function login(page, email, password) {
+
+  await page.goto('http://localhost:2368/ghost/#/signin');
+
+  await page.waitForSelector('input[name="identification"]');
+  await page.fill('input[name="identification"]', email);
+  await page.waitForSelector('input[name="password"]');
+  await page.fill('input[name="password"]', password);
+
+  
+  await Promise.all([
+    page.waitForNavigation(),         // Espera que cambie de página
+    page.click('button[type="submit"]') // Click en el botón de submit
+  ]);
+
+  await page.waitForURL('**/#/dashboard');
 }
 
