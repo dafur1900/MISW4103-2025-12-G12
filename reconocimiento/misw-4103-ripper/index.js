@@ -98,7 +98,7 @@ console.log(inputValues);
       errors = [];
       browser.close();
 
-      fs.copyFileSync('./index.html', `${basePath}/report.html`);
+      fs.copyFileSync('./template.html', `${basePath}/index.html`);
     }
 
     console.log('------------------------------------------------------------------------------------')
