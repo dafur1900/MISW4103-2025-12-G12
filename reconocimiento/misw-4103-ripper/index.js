@@ -67,7 +67,7 @@ console.log(inputValues);
 
       //Make sure errors and console events are catched
       await addListeners(page);
-      await login(page, "danielsierra34@gmail.com", "q1w2e3r4t5y6");
+      await login(page);
       
       if (!fs.existsSync(screenshots_directory)){
         fs.mkdirSync(screenshots_directory, { recursive: true });
@@ -627,51 +627,66 @@ function createErrorGraph(){
   });
 }
 
-async function fillInput(elementHandle, page) {
-  try {
-    let type = await page.evaluate(el => {
-      return el.type;
-    }, elementHandle);
-
-    if (type === 'text') {
-      await elementHandle.click();
-      await page.keyboard.type(faker.lorem.words());
-    } else if (type === 'search') {
-      await elementHandle.click();
-      await page.keyboard.type(faker.random.alphaNumeric());
-    } else if (type === 'password') {
-      await elementHandle.click();
-      await page.keyboard.type(faker.internet.password());
-    } else if (type === 'email') {
-      await elementHandle.click();
-      await page.keyboard.type(faker.internet.email());
-    } else if (type === 'tel') {
-      await elementHandle.click();
-      await page.keyboard.type(faker.phone.phoneNumber());
-    } else if (type === 'number') {
-      await elementHandle.click();
-      await page.keyboard.type(String(faker.random.numeric(5))); // corregido para usar número
-    } else if (type === 'submit' || type === 'radio' || type === 'checkbox') {
-      await elementHandle.click();
-    }
-  } catch (error) {
-    if (error.name === 'TimeoutError') {
-      console.warn(`Timeout llenando el input. Ignorando...`);
-    } else {
-      throw error; // Otros errores los seguimos lanzando
-    }
+async function fillInput(elementHandle, page){
+  let type = await page.evaluate(el => {
+    return el.type;
+  }, elementHandle);
+  if(type === 'text'){
+    elementHandle.click();
+    page.keyboard.type(faker.lorem.words());
+  }
+  else if(type === 'search'){
+    elementHandle.click();
+    page.keyboard.type(faker.random.alphaNumeric());
+  }
+  else if(type === 'password'){
+    elementHandle.click();
+    page.keyboard.type(faker.internet.password()); 
+  }
+  else if(type === 'email'){
+    elementHandle.click();
+    page.keyboard.type(faker.internet.email());
+  }
+  else if (type === 'tel'){
+    elementHandle.click();
+    page.keyboard.type(faker.phone.phoneNumber()) ;
+  }
+  else if (type === 'number'){
+    elementHandle.click();
+    page.keyboard.type(faker.random.number) ;
+  }
+  else if(type === 'submit' || type === 'radio' || type === 'checkbox'){
+    elementHandle.click();
   }
 }
 
+async function login(page) {
 
-async function login(page, email, password) {
+  await page.goto('http://localhost:2368/ghost');
+  await page.waitForNavigation({ waitUntil: 'networkidle0' });
 
-  await page.goto('http://localhost:2368/ghost/#/signin');
+  currentUrl = await page.url();
+  console.log(currentUrl)
 
-  await page.waitForSelector('input[name="identification"]');
-  await page.fill('input[name="identification"]', email);
-  await page.waitForSelector('input[name="password"]');
-  await page.fill('input[name="password"]', password);
+  if(currentUrl.includes('/setup')) {
+    await page.waitForSelector('input[name="blog-title"]');
+    await page.fill('input[name="blog-title"]', "Titulo de Blog");
+    await page.waitForSelector('input[name="name"]');
+    await page.fill('input[name="name"]', "Daniel");  
+    await page.waitForSelector('input[name="email"]');
+    await page.fill('input[name="email"]', "danielsierra34@gmail.com");  
+    await page.waitForSelector('input[name="password"]');
+    await page.fill('input[name="password"]', "q1w2e3r4t5y6");  
+  }
+
+  if(currentUrl.includes('/signin')) {
+    await page.waitForSelector('input[name="identification"]');
+    await page.fill('input[name="identification"]', "danielsierra34@gmail.com");
+    await page.waitForSelector('input[name="password"]');
+    await page.fill('input[name="password"]', "q1w2e3r4t5y6");
+  }
+
+  
 
   
   await Promise.all([
